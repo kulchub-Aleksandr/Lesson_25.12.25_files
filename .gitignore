@@ -1,5 +1,4 @@
 .gradle
-.idea
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
@@ -11,6 +10,10 @@ build/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/.gitignore
+.idea/gradle.xml
+.idea/misc.xml
+.idea/vcs.xml
 *.iws
 *.iml
 *.ipr
@@ -42,3 +45,4 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+.idea
