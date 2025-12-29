@@ -1,0 +1,13 @@
+{
+  "orderId": "RU-775",
+  "status": "DELIVERED",
+  "totalPrice": 1550.50,
+  "customer": {
+    "name": "Ivan",
+    "phone": "79001112233"
+  },
+  "items": [
+    {"id": 1, "title": "Pizza Margarita", "quantity": 1},
+    {"id": 2, "title": "Coca-Cola", "quantity": 2}
+  ]
+}
