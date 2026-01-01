@@ -30,7 +30,6 @@ public class FilesParsingTest {
 
     private ClassLoader cl = FilesParsingTest.class.getClassLoader();
     private static final JsonFactory jsonFactory = new JsonFactory();
-    //private ObjectMapper objectMapper = new ObjectMapper();
 
 
     @BeforeEach
@@ -83,9 +82,10 @@ public class FilesParsingTest {
         }
     }
 
-    @Test
-    void zipFileParsingTest() throws Exception {
 
+
+    @Test
+    void pdfFileInZipParsingTest() throws Exception {
         try (ZipInputStream zis = new ZipInputStream(
                 cl.getResourceAsStream("Pump.zip")
         )) {
@@ -101,17 +101,48 @@ public class FilesParsingTest {
                     assertThat(pdf, containsText("Ремонтные работы"));
                     System.out.printf("Проверен PDF: %s%n", name);
                     System.out.println("Проверка закончена  ");
+                    break;
 
-                } else if (entry.getName().endsWith(".xlsx")) {
+                }
+            }
+        }
+    }
+
+    @Test
+    void xlsxFileInZipParsingTest() throws Exception {
+        try (ZipInputStream zis = new ZipInputStream(
+                cl.getResourceAsStream("Pump.zip")
+        )) {
+            ZipEntry entry;
+
+            while ((entry = zis.getNextEntry()) != null) {
+                String name = entry.getName();
+                System.out.println("Нашел файл в архиве: " + name);
+                if (entry.getName().endsWith(".xlsx")) {
                     XLS xls = new XLS(zis);
                     System.out.println("Начало проверкм XLS");
                     String actualValue = xls.excel.getSheetAt(0).getRow(7).getCell(1).getStringCellValue();
                     Assertions.assertTrue(actualValue.contains("Ремонтные работы"));
                     System.out.printf("Проверен xlsx: %s%n", name);
                     System.out.println("Проверка закончена  ");
+                    break;
+                }
+            }
+        }
 
+    }
 
-                } else if (entry.getName().endsWith(".csv")) {
+    @Test
+    void csvFileInZipParsingTest() throws Exception {
+        try (ZipInputStream zis = new ZipInputStream(
+                cl.getResourceAsStream("Pump.zip")
+        )) {
+            ZipEntry entry;
+
+            while ((entry = zis.getNextEntry()) != null) {
+                String name = entry.getName();
+                System.out.println("Нашел файл в архиве: " + name);
+                if (entry.getName().endsWith(".csv")) {
                     System.out.println("Начало проверкм CSV");
                     // ВАЖНО: Не закрываем ридер внутри, чтобы не убить ZipInputStream, не как в примере выше
                     InputStreamReader isr = new InputStreamReader(zis, StandardCharsets.UTF_8);
@@ -129,7 +160,7 @@ public class FilesParsingTest {
                     );
                     System.out.printf("Проверен CSV: %s%n", name);
                     System.out.println("Проверка закончена  ");
-
+                    break;
                 }
             }
         }
