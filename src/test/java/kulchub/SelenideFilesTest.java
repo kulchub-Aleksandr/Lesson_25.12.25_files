@@ -18,21 +18,16 @@ public class SelenideFilesTest {
 
     @Test
     void downloadFileTest() throws Exception {
-        //open("https://github.com/junit-team/junit5/blob/main/README.md");
+
         open("https://demoqa.com/upload-download");
 
         File download =
-                //$(".react-blob-header-edit-and-raw-actions [href*='main/README.md']")
+
                 $("[href*='data:image/jpeg;base64,']")
                         .download();
 
         System.out.println();
 
-//        try (InputStream is = new FileInputStream(download)) {
-//            byte[] data = is.readAllBytes();
-//            String dataAsString = new String(data, StandardCharsets.UTF_8);
-//            Assertions.assertTrue(dataAsString.contains("Contributions to JUnit 5 are both welcomed and appreciated"));
-//        }
         try (InputStream stream = new FileInputStream(download)) {
             BufferedImage image = ImageIO.read(download);
             Assertions.assertTrue(download.exists(), "Файл не был загружен");

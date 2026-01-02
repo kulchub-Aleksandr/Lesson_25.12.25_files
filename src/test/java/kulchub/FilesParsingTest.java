@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVReader;
 import kulchub.model.Order;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -23,26 +22,13 @@ import static com.codeborne.pdftest.PDF.containsText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FilesParsingTest {
 
     private ClassLoader cl = FilesParsingTest.class.getClassLoader();
     private static final JsonFactory jsonFactory = new JsonFactory();
 
-
-    @BeforeEach
-    void setUp() {
-        //open("https://demoqa.com/text-box");
-        //Configuration.browserSize = "1920x1080";
-        //Configuration.baseUrl = "https://demoqa.com";
-        //Configuration.pageLoadStrategy = "eager";
-        //Configuration.holdBrowserOpen = true;
-        //Configuration.timeout = 10000; // default 4000
-        //executeJavaScript("$('#fixedban').remove()");
-        //executeJavaScript("$('footer').remove()");
-    }
 
     @Test
     void pdfFileParsingTest() throws Exception {
@@ -90,11 +76,13 @@ public class FilesParsingTest {
                 cl.getResourceAsStream("Pump.zip")
         )) {
             ZipEntry entry;
+            boolean pdfFound = false;
 
             while ((entry = zis.getNextEntry()) != null) {
                 String name = entry.getName();
                 System.out.println("Нашел файл в архиве: " + name);
                 if (entry.getName().endsWith(".pdf")) {
+                    pdfFound = true;
                     PDF pdf = new PDF(zis);
                     System.out.println("Начало проверкм PDF");
                     assertEquals("qaguru", pdf.keywords);
@@ -105,6 +93,7 @@ public class FilesParsingTest {
 
                 }
             }
+            assertTrue(pdfFound, "В архиве не найден файл с расширением .pdf");
         }
     }
 
@@ -114,11 +103,13 @@ public class FilesParsingTest {
                 cl.getResourceAsStream("Pump.zip")
         )) {
             ZipEntry entry;
+            boolean xlsxFound = false;
 
             while ((entry = zis.getNextEntry()) != null) {
                 String name = entry.getName();
                 System.out.println("Нашел файл в архиве: " + name);
                 if (entry.getName().endsWith(".xlsx")) {
+                    xlsxFound = true;
                     XLS xls = new XLS(zis);
                     System.out.println("Начало проверкм XLS");
                     String actualValue = xls.excel.getSheetAt(0).getRow(7).getCell(1).getStringCellValue();
@@ -128,8 +119,8 @@ public class FilesParsingTest {
                     break;
                 }
             }
+            assertTrue(xlsxFound, "В архиве не найден файл с расширением .xlsx");
         }
-
     }
 
     @Test
@@ -138,13 +129,15 @@ public class FilesParsingTest {
                 cl.getResourceAsStream("Pump.zip")
         )) {
             ZipEntry entry;
+            boolean csvFound = false;
 
             while ((entry = zis.getNextEntry()) != null) {
                 String name = entry.getName();
                 System.out.println("Нашел файл в архиве: " + name);
                 if (entry.getName().endsWith(".csv")) {
+                    csvFound = true;
                     System.out.println("Начало проверкм CSV");
-                    // ВАЖНО: Не закрываем ридер внутри, чтобы не убить ZipInputStream, не как в примере выше
+
                     InputStreamReader isr = new InputStreamReader(zis, StandardCharsets.UTF_8);
                     CSVReader reader = new CSVReader(isr);
                     List<String[]> data = reader.readAll();
@@ -163,6 +156,7 @@ public class FilesParsingTest {
                     break;
                 }
             }
+            assertTrue(csvFound, "В архиве не найден файл с расширением .csv");
         }
     }
 
@@ -198,11 +192,8 @@ public class FilesParsingTest {
             assertEquals(2, secondItem.getId());
             assertEquals("Coca-Cola", secondItem.getTitle());
             assertEquals(2, secondItem.getQuantity());
-
         }
-
     }
-
 }
 
 
